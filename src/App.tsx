@@ -6,8 +6,10 @@ import Profile from "./routes/profile";
 import Login from "./routes/login";
 import CreateAccount from "./routes/create-account";
 import reset from "styled-reset";
-import { createGlobalStyle } from 'styled-components';
+import { createGlobalStyle,styled } from 'styled-components';
 import LoadingScreen from './components/loading-screen';
+import { auth } from './firebase';
+
 const router = createBrowserRouter([
   {
     path:"/",
@@ -34,20 +36,25 @@ const router = createBrowserRouter([
 ]);
 
 const GlobalStyles = createGlobalStyle`${reset} *{ box-sizing:border-box;} body{background-color:black; color:white;}`;
+const Wrapper = styled.div`
+  height: 100vh;
+  display:flex;
+  justify-content:center;
+`;
 function App() {
   const[isLoading, setLoading] = useState(true);
   const init = async() => {
-    //wait for firebase
+    await auth.authStateReady();
     setLoading(false);
   }
   useEffect(() => {
     init();
   },[]);
   return (
-    <>
+    <Wrapper>
       <GlobalStyles />
       {isLoading ? <LoadingScreen />: <RouterProvider router = {router} />}
-    </>
+    </Wrapper>
   )
 }
 
